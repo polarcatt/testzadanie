@@ -48,62 +48,23 @@
         </table>
     </div>
     <div  v-if="showPopup">
-        <transition name="fade" appear>
-            <div class="modal-overlay" v-if="showPopup">
-                <div class="modal">
-                    <div v-if="editing" class = "change">Изменение</div>
-                    <div v-else class = "change">Добавление</div>
-                    <table>
-                        <tr>
-                            <td>
-                                <div>Наименование: </div>
-                            </td>
-                            <td><input  v-model="tempPacket.name"></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div> Ширина: </div>
-                            </td>
-                            <td><input type = "number" v-model="tempPacket.sizex"></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div> Длина: </div>
-                            </td>
-                            <td><input type = "number" v-model="tempPacket.sizey"></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div> Высота: </div>
-                            </td>
-                            <td><input type = "number" v-model="tempPacket.sizez"></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div> Вес: </div>
-                            </td>
-                            <td><input type = "number" v-model="tempPacket.weight"></td>
-                        </tr>
-                    </table>
-                    <button class="button toright comp-margin" @click="Close()">
-                    Закрыть
-                    </button>
-                    <button class="button toright comp-margin" @click="SaveAndClose()">
-                    Сохранить
-                    </button>
-                    
-                    
-                </div>
-            </div>
-        </transition>
+        <modal  :nameq = "tempPacket.name" 
+                :sizexq = "tempPacket.sizex" 
+                :sizeyq = "tempPacket.sizey"
+                :sizezq = "tempPacket.sizez"
+                :weightq = "tempPacket.weightq"
+            v-on:save="SaveAndClose" v-on:close="Close()"/>
     </div>
 </template>
 <script>
-
     import axios from 'axios';
+    import modal from '@/components/modal';
 
     export default {
       name: 'Table',
+      components:{
+        modal,
+      },
       data() {
         return{
             showPopup: false,
@@ -179,7 +140,7 @@
             СloseModal : function(){
                 this.Close();
             },
-            SaveAndClose:function() {
+            SaveAndClose:function(name, sizex, sizey, sizez, weight) {
                 const qpack = {
                         id: -1,
                         name: " ",
@@ -187,16 +148,16 @@
                         sizey: 0,
                           sizez: 0,
                           weight: 0
-                    }
+                }
                 if(this.indexNew == this.packets.length){
                     this.packets.push(qpack)
                     this.packets[this.packets.length-1].id = this.newId
                 }
-                this.packets[this.indexNew].name = this.tempPacket.name
-                this.packets[this.indexNew].sizex = this.tempPacket.sizex
-                this.packets[this.indexNew].sizey = this.tempPacket.sizey
-                this.packets[this.indexNew].sizez = this.tempPacket.sizez
-                this.packets[this.indexNew].weight = this.tempPacket.weight
+                this.packets[this.indexNew].name = name
+                this.packets[this.indexNew].sizex = sizex
+                this.packets[this.indexNew].sizey = sizey
+                this.packets[this.indexNew].sizez = sizez
+                this.packets[this.indexNew].weight = weight
                 if(this.editing){
                     const data = this.packets[this.indexNew]
                     const path = 'http://localhost:5000/data/' + this.packets[this.indexNew].id;

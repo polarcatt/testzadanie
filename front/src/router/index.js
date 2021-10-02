@@ -5,7 +5,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/table',
+      path: '/',
       name: 'Mainapp',
       component: Mainapp,
     },
