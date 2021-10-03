@@ -8,6 +8,11 @@
                             Добавить новую запись
                         </div>
                     </button>
+                    <button class = "toright comp-margin" v-on:click = "GetData()">
+                        <div class = "text-margin">
+                            Обновить
+                        </div>
+                    </button>
                 </div>
             </thead>
             <tbody>
@@ -35,7 +40,7 @@
                                         Изменить
                                     </div>
                                 </button>
-                                <button class = "comp-margin" v-on:click="DeletePacket(index)">
+                                <button class = "comp-margin" v-on:click="StartDelete(index)">
                                     <div class = "text-margin">
                                         Удалить
                                     </div>
@@ -47,45 +52,36 @@
             </tbody>
         </table>
     </div>
-    <div  v-if="showPopup">
+    <div  v-if="showPopupEdit">
         <modal  :nameq = "tempPacket.name" 
                 :sizexq = "tempPacket.sizex" 
                 :sizeyq = "tempPacket.sizey"
                 :sizezq = "tempPacket.sizez"
-                :weightq = "tempPacket.weightq"
-            v-on:save="SaveAndClose" v-on:close="Close()"/>
+                :weightq = "tempPacket.weight"
+            v-on:save="SaveAndClose" v-on:close="CloseEdit"/>
+    </div>
+    <div  v-if="showPopupDelete">
+        <deleteModal  :indexq = "indexNew"
+            v-on:confirm="DeletePacket" v-on:close="CloseDelete"/>
     </div>
 </template>
 <script>
     import axios from 'axios';
     import modal from '@/components/modal';
+    import deleteModal from '@/components/deleteModal';
 
     export default {
       name: 'Table',
       components:{
         modal,
+        deleteModal
       },
       data() {
         return{
-            showPopup: false,
+            showPopupEdit: false,
+            showPopupDelete: false,
             editing: false,
             packets: [
-            {
-              id: 1,
-              name: "hello",
-              sizex: 100,
-              sizey: 100,
-              sizez: 100,
-              weight: 100
-            },
-            {
-              id: 2,
-              name: "hello2",
-              sizex: 120,
-              sizey: 50,
-              sizez: 100,
-              weight: 100
-            },
             
             ],
             indexNew: 2,
@@ -109,9 +105,15 @@
             }
         },
         methods:{
+            StartDelete: function(index){
+                this.indexNew = index
+                this.showPopupDelete = true
+            },
+
             DeletePacket : function(index){
                 const path = "http://localhost:5000/data/" + this.packets[index].id;
                 this.packets.splice(index, 1);
+                this.showPopupDelete = false
                 axios.delete(path)
                     .then(() => {
                     this.GetData();
@@ -119,6 +121,7 @@
                     console.error(error);
                     this.GetData();
                 });
+
             },
             EditPacket : function(index){
                 this.indexNew = index
@@ -127,18 +130,18 @@
                 this.tempPacket.sizey = this.packets[index].sizey
                 this.tempPacket.sizez = this.packets[index].sizez
                 this.tempPacket.weight = this.packets[index].weight
-                this.showPopup = true;
+                this.showPopupEdit = true;
                 this.editing = true;
             },
     
             NewPacket : function(){
                 this.indexNew = this.packets.length
-                this.showPopup = true;
+                this.showPopupEdit = true;
                 this.newId += 1;
                 this.editing = false;
             },
-            СloseModal : function(){
-                this.Close();
+            CloseDelete : function(){
+                this.showPopupDelete = false
             },
             SaveAndClose:function(name, sizex, sizey, sizez, weight) {
                 const qpack = {
@@ -179,15 +182,16 @@
                         this.GetData();
                     });
                 }
-                this.Close()
+                this.CloseEdit()
             },
-            Close:function(){
+
+            CloseEdit:function(){
                 this.tempPacket.name = this.nullPacket.name
                 this.tempPacket.sizex = this.nullPacket.sizex
                 this.tempPacket.sizey = this.nullPacket.sizey
                 this.tempPacket.sizez = this.nullPacket.sizez
                 this.tempPacket.weight = this.nullPacket.weight
-                this.showPopup = false
+                this.showPopupEdit = false
             },
 
             GetData:function(){
@@ -198,7 +202,8 @@
                     this.newId = res.data.nextId;
                 })
                 .catch((error) => {
-                    console.error(error);
+                    console.log(error)
+                    alert("Нет соединения с сервером!")
                 });
             }
         },
