@@ -8,11 +8,6 @@
                             Добавить новую запись
                         </div>
                     </button>
-                    <button class = "toright comp-margin" v-on:click = "GetData()">
-                        <div class = "text-margin">
-                            Обновить
-                        </div>
-                    </button>
                 </div>
             </thead>
             <tbody>
@@ -203,7 +198,7 @@
                 })
                 .catch((error) => {
                     console.log(error)
-                    alert("Нет соединения с сервером!")
+                    //alert("Нет соединения с сервером!")
                 });
             }
         },

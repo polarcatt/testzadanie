@@ -33,7 +33,6 @@ export default {
     },
 
     methods:{
-
         Close:function () {
             this.$emit('close')
         },
