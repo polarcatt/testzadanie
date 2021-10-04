@@ -1,5 +1,6 @@
 <template>
     <div class = "app">
+        <div>
         <table class = "tableborder fulltable">
             <thead>
                 <div class = "fullborderd">
@@ -59,6 +60,7 @@
         <deleteModal  :indexq = "indexNew"
             v-on:confirm="DeletePacket" v-on:close="CloseDelete"/>
     </div>
+</div>
 </template>
 <script>
     import axios from 'axios';
@@ -83,7 +85,7 @@
             newId: 2,
             tempPacket: {
                 id: -1,
-                name: " ",
+                name: "Наименование",
                 sizex: 0,
                 sizey: 0,
                 sizez: 0,
@@ -91,7 +93,7 @@
             },
             nullPacket: {
                 id: -1,
-                name: " ",
+                name: "Наименование",
                 sizex: 0,
                 sizey: 0,
                 sizez: 0,
